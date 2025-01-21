@@ -1,0 +1,57 @@
+# Import necessary libraries
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+url = "https://raw.githubusercontent.com/kb22/Heart-Disease-Prediction/refs/heads/master/dataset.csv"
+df = pd.read_csv(url)
+
+url = "https://raw.githubusercontent.com/kb22/Heart-Disease-Prediction/refs/heads/master/dataset.csv"
+df = pd.read_csv(url)
+
+# Step 2: Explore the data (first 5 rows)
+print(df.head())
+
+# Step 3: Handle missing values if any
+print(df.isnull().sum())  # Check for missing values
+# We can fill missing values with the mean or drop rows, depending on the data
+df = df.dropna()  # or use df.fillna(df.mean(), inplace=True)
+
+# Step 4: Split the data into features (X) and target (y)
+X = df.drop('target', axis=1)  # Features
+y = df['target']  # Target variable (heart disease presence)
+
+# Step 5: Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 6: Standardize the data (important for many algorithms)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Step 7: Train the model (Random Forest Classifier)
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# Step 8: Make predictions
+y_pred = model.predict(X_test)
+
+ #Step 9: Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.2f}")
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+
+# Confusion matrix for better visualization of model performance
+cm = confusion_matrix(y_test, y_pred)
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["No Disease", "Disease"], yticklabels=["No Disease", "Disease"])
+plt.xlabel("Predicted")
+plt.ylabel("True")
+plt.title("Confusion Matrix")
+plt.show()
+
+
